@@ -13,7 +13,7 @@ before_script:
   - php artisan key:generate
   - pear install pear/PHP_CodeSniffer
   - phpenv rehash
-  - nvm install 7.7.1
+  - nvm install 11.3.0
   - npm install npm@latest -g
   - npm install -g jshint
   - npm install
