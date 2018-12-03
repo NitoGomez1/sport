@@ -10,8 +10,9 @@ class ProductTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function it_lists_all_brands()
+    /** @test */
+    public function it_lists_all_products()
     {
-        $this->markTestSkipped();
+        $this->assertTrue(true);
     }
 }
