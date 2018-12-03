@@ -57,7 +57,7 @@ return [
         ],
 
         'testing' => [
-            'driver'    => 'mysql',
+            'driver'    => 'sqlite',
             'host'      => env('DB_TEST_HOST', 'localhost'),
             'database'  => env('DB_TEST_DATABASE', 'sport_testing'),
             'username'  => env('DB_TEST_USERNAME', 'homestead'),
