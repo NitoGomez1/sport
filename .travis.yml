@@ -7,16 +7,29 @@ php:
   - '7.2'
 
 before_script:
+  - phpenv config-rm xdebug.ini
+  - cp .env.travis .env
   - composer self-update
   - composer install --no-interaction
-  - cp .env.travis .env
   - php artisan key:generate
+  - php artisan migrate
   - pear install pear/PHP_CodeSniffer
   - phpenv rehash
   - nvm install 11.3.0
   - npm install npm@latest -g
   - npm install -g jshint
   - npm install
+
+before_install:
+  - mysql -e 'CREATE DATABASE sport_testing'
+
+services:
+  - mysql
+
+cache:
+  directories:
+    - node_modules
+    - vendor
 
 script:
   - vendor/bin/phpunit --coverage-text
