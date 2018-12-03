@@ -18,6 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::name('api.')->namespace('Api')->group(function() {
-    Route::resource('brands', 'BrandsController')->only('index', 'show');
+    Route::apiResource('brands', 'BrandsController');
+    Route::apiResource('categories', 'CategoriesController');
 });
-

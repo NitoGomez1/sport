@@ -18,30 +18,24 @@ class BrandsController extends Controller
     {
         $brands = Brand::oldest('name')->paginate();
 
-        return response()->json([
-            'data' => $brands,
-        ], Response::HTTP_OK);
+        return response()->json($brands, Response::HTTP_OK);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * @param Request $request
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => ['required', 'string', 'unique:brands'],
+        ]);
+
+        $brand = Brand::create($request->only('name'));
+
+        return response()->json($brand, Response::HTTP_CREATED);
     }
 
     /**
@@ -58,36 +52,31 @@ class BrandsController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Brand $brand
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function edit($id)
+    public function update(Request $request, Brand $brand)
     {
-        //
+        $this->validate($request, [
+            'name' => ['unique:brands,name,' . $brand->id],
+        ]);
+
+        $brand->update($request->only('name'));
+
+        return response()->json(['data' => $brand], Response::HTTP_OK);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Brand $brand
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
-    public function update(Request $request, $id)
+    public function destroy(Brand $brand)
     {
-        //
-    }
+        $brand->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json(['data' => $brand], Response::HTTP_OK);
     }
 }
