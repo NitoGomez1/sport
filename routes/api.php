@@ -16,3 +16,8 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::name('api.')->namespace('Api')->group(function() {
+    Route::resource('brands', 'BrandsController')->only('index', 'show');
+});
+

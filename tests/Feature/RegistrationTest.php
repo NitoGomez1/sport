@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
