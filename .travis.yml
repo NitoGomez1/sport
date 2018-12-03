@@ -13,18 +13,18 @@ before_script:
   - composer install --no-interaction
   - php artisan key:generate
   - php artisan migrate
-  - pear install pear/PHP_CodeSniffer
+#  - pear install pear/PHP_CodeSniffer
   - phpenv rehash
   - nvm install 11.3.0
   - npm install npm@latest -g
   - npm install -g jshint
   - npm install
 
-before_install:
-  - mysql -e 'CREATE DATABASE sport_testing'
-
-services:
-  - mysql
+#before_install:
+#  - mysql -e 'CREATE DATABASE sport_testing'
+#
+#services:
+#  - mysql
 
 cache:
   directories:
@@ -33,6 +33,6 @@ cache:
 
 script:
   - vendor/bin/phpunit --coverage-text
-  - phpcs --ignore=app/Http/Controllers/Auth,app/Http/Controllers/Controller.php app/Http/Controllers
+#  - phpcs --ignore=app/Http/Controllers/Auth,app/Http/Controllers/Controller.php app/Http/Controllers
   - npm run production
   - jshint resources/js/*
