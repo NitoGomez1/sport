@@ -20,4 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::name('api.')->namespace('Api')->group(function() {
     Route::apiResource('brands', 'BrandsController');
     Route::apiResource('categories', 'CategoriesController');
+    Route::apiResource('products', 'ProductsController');
 });
