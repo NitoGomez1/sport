@@ -12,11 +12,14 @@ $factory->define(App\Models\Product::class, function (Faker $faker) {
         'category_id'  => function () {
             return factory(App\Models\Category::class)->create()->id;
         },
+        'product_level_id'  => function () {
+            return factory(App\Models\ProductLevel::class)->create()->id;
+        },
         'dkt_id'       => $faker->randomNumber(7),
-        'name'         => rtrim($faker->sentence),
+        'name'         => rtrim($faker->sentence, '.'),
         'description'  => $faker->realText(100),
         'source'       => $faker->url,
-        'image'        => $faker->imageUrl,
+        'image'        => $faker->imageUrl(100, 100),
         'price'        => $faker->numberBetween(10, 1000),
         'gtin'         => $faker->ean13,
         'color'        => $faker->word,

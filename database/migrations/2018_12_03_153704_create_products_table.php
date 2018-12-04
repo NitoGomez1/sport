@@ -17,6 +17,7 @@ class CreateProductsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('brand_id');
             $table->unsignedInteger('category_id');
+            $table->unsignedInteger('product_level_id')->nullable();
             $table->unsignedInteger('dkt_id')->unique()->nullable();
             $table->string('name')->unique();
             $table->text('description');
@@ -44,6 +45,11 @@ class CreateProductsTable extends Migration
                 ->references('id')
                 ->on('categories')
                 ->onDelete('cascade');
+
+            $table->foreign('product_level_id')
+                ->references('id')
+                ->on('categories')
+                ->onDelete('SET NULL');
         });
     }
 

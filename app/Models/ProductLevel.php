@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Brand extends Model
+class ProductLevel extends Model
 {
     use SoftDeletes;
 
@@ -33,7 +33,7 @@ class Brand extends Model
     protected $dates = ['deleted_at'];
 
     /**
-     * Get the products for a given brand.
+     * Get the products for a given level.
      */
     public function products(): HasMany
     {

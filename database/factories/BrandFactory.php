@@ -4,6 +4,6 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Models\Brand::class, function (Faker $faker) {
     return [
-        'name' => ucfirst($faker->word),
+        'name' => rtrim($faker->sentence(1), '.'),
     ];
 });
