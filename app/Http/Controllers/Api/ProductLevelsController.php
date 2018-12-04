@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\ProductLevel\CreateProductLevelRequest;
+use App\Http\Requests\ProductLevel\UpdateProductLevelRequest;
 use App\Models\ProductLevel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -22,16 +24,11 @@ class ProductLevelsController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param CreateProductLevelRequest $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(CreateProductLevelRequest $request)
     {
-        $this->validate($request, [
-            'name' => ['required', 'string', 'unique:product_levels'],
-        ]);
-
         $level = ProductLevel::create($request->only('name'));
 
         return response()->json($level, Response::HTTP_CREATED);
@@ -49,17 +46,12 @@ class ProductLevelsController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param UpdateProductLevelRequest $request
      * @param ProductLevel $productLevel
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Request $request, ProductLevel $productLevel)
+    public function update(UpdateProductLevelRequest $request, ProductLevel $productLevel)
     {
-        $this->validate($request, [
-            'name' => ['unique:product_levels,name,' . $productLevel->id],
-        ]);
-
         $productLevel->update($request->only('name'));
 
         return response()->json(['data' => $productLevel], Response::HTTP_OK);

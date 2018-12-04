@@ -2,12 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

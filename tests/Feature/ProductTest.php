@@ -3,13 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ProductTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     /** @test */
     public function it_lists_all_products()
@@ -49,19 +50,116 @@ class ProductTest extends TestCase
     /** @test */
     public function it_cannot_create_two_products_with_the_same_name()
     {
-        $this->markTestSkipped();
-
         factory(Product::class)->create(['name' => 'foo']);
         $this->assertCount(1, Product::all());
 
         $product = factory(Product::class)->make(['name' => 'foo'])->toArray();
 
-        dd($product);
+        $this->postJson('api/products', $product)
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $this->assertCount(1, Product::all());
+    }
+
+    /** @test */
+    public function product_source_url_has_to_be_a_valid_url()
+    {
+        $data = factory(Product::class)->make(['source' => 'invalid_url']);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertCount(0, Product::all());
+    }
+
+    /** @test */
+    public function it_cannot_create_two_products_with_the_same_url_source()
+    {
+        factory(Product::class)->create(['name' => 'http://foo.test']);
+        $this->assertCount(1, Product::all());
+
+        $product = factory(Product::class)->make(['name' => 'http://foo.test'])->toArray();
 
         $this->postJson('api/products', $product)
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $this->assertCount(1, Product::all());
+    }
+
+    /** @test */
+    public function product_image_is_mandatory()
+    {
+        $data = factory(Product::class)->make(['image' => null]);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertCount(0, Product::all());
+    }
+
+    /** @test */
+    public function product_image_must_be_a_valid_url()
+    {
+        $data = factory(Product::class)->make(['image' => 'invalid_image_url']);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertCount(0, Product::all());
+    }
+
+    /** @test */
+    public function product_price_is_mandatory()
+    {
+        $data = factory(Product::class)->make(['price' => null]);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertCount(0, Product::all());
+    }
+
+    /** @test */
+    public function product_price_should_be_a_valid_number()
+    {
+        $data = factory(Product::class)->make(['price' => 'not a number']);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertCount(0, Product::all());
+    }
+
+    /** @test */
+    public function product_price_should_be_less_than_10000_euros()
+    {
+        $data = factory(Product::class)->make(['price' => 10000]);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertCount(0, Product::all());
+    }
+
+    /** @test */
+    public function product_gtin_can_be_null()
+    {
+        $data = factory(Product::class)->make(['gtin' => null]);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_CREATED);
+        $this->assertCount(1, Product::all());
+    }
+
+    /** @test */
+    public function product_gtin_must_be_unique()
+    {
+        $gtin = $this->faker->ean13;
+        factory(Product::class)->create(['gtin' => $gtin]);
+        $this->assertCount(1, Product::all());
+
+        $product = factory(Product::class)->make(['gtin' => $gtin])->toArray();
+
+        $this->postJson('api/products', $product)
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $this->assertCount(1, Product::all());
+    }
+
+    /** @test */
+    public function product_material_cannot_be_null()
+    {
+        $data = factory(Product::class)->make(['material' => null]);
+        $this->postJson('api/products', $data->toArray())
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertCount(0, Product::all());
     }
 
     /** @test */

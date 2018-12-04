@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Brand\CreateBrandRequest;
+use App\Http\Requests\Brand\UpdateBrandRequest;
 use App\Models\Brand;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 
@@ -22,17 +23,11 @@ class BrandsController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
+     * @param CreateBrandRequest $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(CreateBrandRequest $request)
     {
-        $this->validate($request, [
-            'name' => ['required', 'string', 'unique:brands'],
-        ]);
-
         $brand = Brand::create($request->only('name'));
 
         return response()->json($brand, Response::HTTP_CREATED);
@@ -52,17 +47,12 @@ class BrandsController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param UpdateBrandRequest $request
      * @param Brand $brand
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Request $request, Brand $brand)
+    public function update(UpdateBrandRequest $request, Brand $brand)
     {
-        $this->validate($request, [
-            'name' => ['unique:brands,name,' . $brand->id],
-        ]);
-
         $brand->update($request->only('name'));
 
         return response()->json(['data' => $brand], Response::HTTP_OK);

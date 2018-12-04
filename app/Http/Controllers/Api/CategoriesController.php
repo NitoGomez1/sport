@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Category\CreateCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -22,16 +24,11 @@ class CategoriesController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param CreateCategoryRequest $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(CreateCategoryRequest $request)
     {
-        $this->validate($request, [
-            'name' => ['required', 'string', 'unique:categories'],
-        ]);
-
         $category = Category::create($request->only('name'));
 
         return response()->json($category, Response::HTTP_CREATED);
@@ -48,20 +45,8 @@ class CategoriesController extends Controller
         return response()->json(['data' => $category], Response::HTTP_OK);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param Category $category
-     * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $this->validate($request, [
-            'name' => ['unique:categories,name,' . $category->id],
-        ]);
-
         $category->update($request->only('name'));
 
         return response()->json(['data' => $category], Response::HTTP_OK);
