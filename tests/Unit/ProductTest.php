@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Models\ProductLevel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\QueryException;
-use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -19,7 +18,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_belongs_to_a_brand()
     {
-        $product = factory(Product::class)->make();
+        $product = make(Product::class);
         $this->assertInstanceOf(BelongsTo::class, $product->brand());
         $this->assertInstanceOf(Brand::class, $product->brand);
     }
@@ -27,7 +26,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_belongs_to_a_category()
     {
-        $product = factory(Product::class)->make();
+        $product = make(Product::class);
         $this->assertInstanceOf(BelongsTo::class, $product->category());
         $this->assertInstanceOf(Category::class, $product->category);
     }
@@ -35,7 +34,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_belongs_to_a_level()
     {
-        $product = factory(Product::class)->make();
+        $product = make(Product::class);
         $this->assertInstanceOf(BelongsTo::class, $product->level());
         $this->assertInstanceOf(ProductLevel::class, $product->level);
     }
@@ -44,34 +43,34 @@ class ProductTest extends TestCase
     public function it_needs_a_brand()
     {
         $this->expectException(QueryException::class);
-        factory(Product::class)->create(['brand_id' => null]);
+        create(Product::class, ['brand_id' => null]);
     }
 
     /** @test */
     public function it_needs_an_existing_brand()
     {
         $this->expectException(QueryException::class);
-        factory(Product::class)->create(['brand_id' => 9]);
+        create(Product::class, ['brand_id' => 9]);
     }
 
     /** @test */
     public function it_needs_a_category()
     {
         $this->expectException(QueryException::class);
-        factory(Product::class)->create(['category_id' => null]);
+        create(Product::class, ['category_id' => null]);
     }
 
     /** @test */
     public function it_needs_an_existing_category()
     {
         $this->expectException(QueryException::class);
-        factory(Product::class)->create(['category_id' => 9]);
+        create(Product::class, ['category_id' => 9]);
     }
 
     /** @test */
     public function it_needs_an_existing_product_level_but_it_is_not_required()
     {
-        factory(Product::class)->create(['product_level_id' => null]);
+        create(Product::class, ['product_level_id' => null]);
 
         $this->assertCount(1, Product::all());
     }
@@ -80,7 +79,7 @@ class ProductTest extends TestCase
     public function it_cannot_create_a_product_with_a_game_level_that_does_not_exist()
     {
         $this->expectException(QueryException::class);
-        factory(Product::class)->create(['product_level_id' => 9]);
+        create(Product::class, ['product_level_id' => 9]);
     }
 
     /** @test */
@@ -88,8 +87,8 @@ class ProductTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        factory(Product::class)->create(['dkt_id' => 1]);
-        factory(Product::class)->create(['dkt_id' => 1]);
+        create(Product::class, ['dkt_id' => 1]);
+        create(Product::class, ['dkt_id' => 1]);
     }
 
     /** @test */
@@ -97,8 +96,8 @@ class ProductTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        factory(Product::class)->create(['name' => 'Foo']);
-        factory(Product::class)->create(['name' => 'Foo']);
+        create(Product::class, ['name' => 'Foo']);
+        create(Product::class, ['name' => 'Foo']);
     }
 
     /** @test */
@@ -106,7 +105,7 @@ class ProductTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        factory(Product::class)->create(['name' => null]);
+        create(Product::class, ['name' => null]);
     }
 
     /** @test */
@@ -114,7 +113,7 @@ class ProductTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        factory(Product::class)->create(['description' => null]);
+        create(Product::class, ['description' => null]);
     }
 
     /** @test */
@@ -122,7 +121,7 @@ class ProductTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        factory(Product::class)->create(['source' => 'http://foo.test']);
-        factory(Product::class)->create(['source' => 'http://foo.test']);
+        create(Product::class, ['source' => 'http://foo.test']);
+        create(Product::class, ['source' => 'http://foo.test']);
     }
 }

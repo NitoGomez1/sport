@@ -16,7 +16,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function has_many_products()
     {
-        $category = factory(Category::class)->create();
+        $category = create(Category::class);
         factory(Product::class)->make(['category_id' => $category->id]);
 
         $this->assertInstanceOf(HasMany::class, $category->products());

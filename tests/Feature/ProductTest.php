@@ -15,7 +15,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_lists_all_products()
     {
-        $product = factory(Product::class)->create();
+        $product = create(Product::class);
 
         $this->getJson('api/products')
             ->assertSuccessful()
@@ -25,7 +25,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_shows_a_product()
     {
-        $product = factory(Product::class)->create();
+        $product = create(Product::class);
         $this->getJson('api/products/' . $product->id)
             ->assertSuccessful()
             ->assertJsonFragment([
@@ -50,10 +50,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_cannot_create_two_products_with_the_same_name()
     {
-        factory(Product::class)->create(['name' => 'foo']);
+        create(Product::class, ['name' => 'foo']);
         $this->assertCount(1, Product::all());
 
-        $product = factory(Product::class)->make(['name' => 'foo'])->toArray();
+        $product = make(Product::class, ['name' => 'foo'])->toArray();
 
         $this->postJson('api/products', $product)
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -64,7 +64,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_source_url_has_to_be_a_valid_url()
     {
-        $data = factory(Product::class)->make(['source' => 'invalid_url']);
+        $data = make(Product::class, ['source' => 'invalid_url']);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertCount(0, Product::all());
@@ -73,10 +73,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_cannot_create_two_products_with_the_same_url_source()
     {
-        factory(Product::class)->create(['name' => 'http://foo.test']);
+        create(Product::class, ['name' => 'http://foo.test']);
         $this->assertCount(1, Product::all());
 
-        $product = factory(Product::class)->make(['name' => 'http://foo.test'])->toArray();
+        $product = make(Product::class, ['name' => 'http://foo.test'])->toArray();
 
         $this->postJson('api/products', $product)
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -87,7 +87,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_image_is_mandatory()
     {
-        $data = factory(Product::class)->make(['image' => null]);
+        $data = make(Product::class, ['image' => null]);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertCount(0, Product::all());
@@ -96,7 +96,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_image_must_be_a_valid_url()
     {
-        $data = factory(Product::class)->make(['image' => 'invalid_image_url']);
+        $data = make(Product::class, ['image' => 'invalid_image_url']);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertCount(0, Product::all());
@@ -105,7 +105,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_price_is_mandatory()
     {
-        $data = factory(Product::class)->make(['price' => null]);
+        $data = make(Product::class, ['price' => null]);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertCount(0, Product::all());
@@ -114,7 +114,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_price_should_be_a_valid_number()
     {
-        $data = factory(Product::class)->make(['price' => 'not a number']);
+        $data = make(Product::class, ['price' => 'not a number']);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertCount(0, Product::all());
@@ -123,7 +123,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_price_should_be_less_than_10000_euros()
     {
-        $data = factory(Product::class)->make(['price' => 10000]);
+        $data = make(Product::class, ['price' => 10000]);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertCount(0, Product::all());
@@ -132,7 +132,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_gtin_can_be_null()
     {
-        $data = factory(Product::class)->make(['gtin' => null]);
+        $data = make(Product::class, ['gtin' => null]);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_CREATED);
         $this->assertCount(1, Product::all());
@@ -142,7 +142,7 @@ class ProductTest extends TestCase
     public function product_gtin_must_be_unique()
     {
         $gtin = $this->faker->ean13;
-        factory(Product::class)->create(['gtin' => $gtin]);
+        create(Product::class, ['gtin' => $gtin]);
         $this->assertCount(1, Product::all());
 
         $product = factory(Product::class)->make(['gtin' => $gtin])->toArray();
@@ -156,7 +156,7 @@ class ProductTest extends TestCase
     /** @test */
     public function product_material_cannot_be_null()
     {
-        $data = factory(Product::class)->make(['material' => null]);
+        $data = make(Product::class, ['material' => null]);
         $this->postJson('api/products', $data->toArray())
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertCount(0, Product::all());
@@ -165,7 +165,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_products_when_browse_all()
     {
-        $product = factory(Product::class)->create();
+        $product = create(Product::class);
         $product->delete();
 
         $this->getJson('api/products')->assertJsonMissing(['name' => $product->name]);
@@ -175,7 +175,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_products_when_show_one()
     {
-        $product = factory(Product::class)->create();
+        $product = create(Product::class);
         $product->delete();
 
         $this->getJson('api/products/' . $product->id)->assertStatus(Response::HTTP_NOT_FOUND);
@@ -185,10 +185,9 @@ class ProductTest extends TestCase
     /** @test */
     public function it_updates_a_product()
     {
-        $product = factory(Product::class)->create();
+        $product = create(Product::class);
 
-        $this->patchJson('api/products/' . $product->id, ['name' => 'Updated'])
-            ->assertSuccessful();
+        $this->patchJson('api/products/' . $product->id, ['name' => 'Updated']);
 
         $this->assertEquals('Updated', $product->fresh()->name);
     }
@@ -196,12 +195,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_does_not_update_a_product_if_there_is_another_with_the_same_name()
     {
-        $this->markTestSkipped();
+        create(Product::class, ['name' => 'Foo']);
+        $product = create(Product::class, ['name' => 'Bar']);
 
-        factory(Product::class)->create(['name' => 'Foo']);
-        $product = factory(Product::class)->create(['name' => 'Bar']);
-
-        $this->patchJson('api/categories/' . $product->id, ['name' => 'Foo'])
+        $this->patchJson('api/products/' . $product->id, ['name' => 'Foo'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $this->assertEquals('Bar', $product->fresh()->name);
@@ -210,7 +207,7 @@ class ProductTest extends TestCase
     /** @test */
     public function it_deletes_a_product()
     {
-        $product = factory(Product::class)->create();
+        $product = create(Product::class);
         $this->deleteJson('api/products/' . $product->id)
             ->assertSuccessful()
             ->assertJsonFragment([

@@ -16,8 +16,8 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function has_many_products()
     {
-        $level = factory(ProductLevel::class)->create();
-        factory(Product::class)->make(['product_level_id' => $level->id]);
+        $level = create(ProductLevel::class);
+        make(Product::class, ['product_level_id' => $level->id]);
 
         $this->assertInstanceOf(HasMany::class, $level->products());
         $this->assertInstanceOf(Collection::class, $level->products);

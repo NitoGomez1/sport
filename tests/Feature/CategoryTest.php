@@ -14,7 +14,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_lists_all_categories()
     {
-        $category = factory(Category::class)->create();
+        $category = create(Category::class);
 
         $this->getJson('api/categories')
             ->assertSuccessful()
@@ -24,7 +24,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_shows_a_category()
     {
-        $category = factory(Category::class)->create();
+        $category = create(Category::class);
         $this->getJson('api/categories/' . $category->id)
             ->assertSuccessful()
             ->assertJsonFragment([
@@ -51,7 +51,7 @@ class CategoryTest extends TestCase
     {
         $data = ['name' => 'test'];
 
-        factory(Category::class)->create($data);
+        create(Category::class, $data);
         $this->assertCount(1, Category::all());
 
         $this->postJson('api/categories/', ['name' => 'test'])
@@ -63,7 +63,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_categories_when_browse_all()
     {
-        $category = factory(Category::class)->create();
+        $category = create(Category::class);
         $category->delete();
 
         $this->getJson('api/categories')->assertJsonMissing(['name' => $category->name]);
@@ -73,7 +73,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_categories_when_show_one()
     {
-        $category = factory(Category::class)->create();
+        $category = create(Category::class);
         $category->delete();
 
         $this->getJson('api/categories/' . $category->id)->assertStatus(Response::HTTP_NOT_FOUND);
@@ -83,7 +83,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_updates_a_category()
     {
-        $category = factory(Category::class)->create();
+        $category = create(Category::class);
 
         $this->patchJson('api/categories/' . $category->id, ['name' => 'Updated'])
             ->assertSuccessful();
@@ -94,8 +94,8 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_does_not_update_a_category_if_there_is_another_with_the_same_name()
     {
-        factory(Category::class)->create(['name' => 'Foo']);
-        $category = factory(Category::class)->create(['name' => 'Bar']);
+        create(Category::class, ['name' => 'Foo']);
+        $category = create(Category::class, ['name' => 'Bar']);
 
         $this->patchJson('api/categories/' . $category->id, ['name' => 'Foo'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -106,7 +106,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_deletes_a_category()
     {
-        $category = factory(Category::class)->create();
+        $category = create(Category::class);
         $this->deleteJson('api/categories/' . $category->id)
             ->assertSuccessful()
             ->assertJsonFragment([

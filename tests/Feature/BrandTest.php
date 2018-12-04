@@ -14,7 +14,8 @@ class BrandTest extends TestCase
     /** @test */
     public function it_lists_all_brands()
     {
-        $brand = factory(Brand::class)->create();
+        $brand = create(Brand::class);
+
         $this->getJson('api/brands')
             ->assertSuccessful()
             ->assertJsonFragment([
@@ -27,7 +28,7 @@ class BrandTest extends TestCase
     /** @test */
     public function it_shows_a_brand()
     {
-        $brand = factory(Brand::class)->create();
+        $brand = create(Brand::class);
         $this->getJson('api/brands/' . $brand->id)
             ->assertSuccessful()
             ->assertJsonFragment([
@@ -54,7 +55,7 @@ class BrandTest extends TestCase
     {
         $data = ['name' => 'test'];
 
-        factory(Brand::class)->create($data);
+        create(Brand::class, $data);
         $this->assertCount(1, Brand::all());
 
         $this->postJson('api/brands/', ['name' => 'test'])
@@ -66,7 +67,7 @@ class BrandTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_brands_when_browse_all()
     {
-        $brand = factory(Brand::class)->create();
+        $brand = create(Brand::class);
         $brand->delete();
 
         $this->getJson('api/brands')->assertJsonMissing(['name' => $brand->name]);
@@ -76,7 +77,7 @@ class BrandTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_brands_when_show_one()
     {
-        $brand = factory(Brand::class)->create();
+        $brand = create(Brand::class);
         $brand->delete();
 
         $this->getJson('api/brands/' . $brand->id)->assertStatus(Response::HTTP_NOT_FOUND);
@@ -86,7 +87,7 @@ class BrandTest extends TestCase
     /** @test */
     public function it_updates_a_brand()
     {
-        $brand = factory(Brand::class)->create();
+        $brand = create(Brand::class);
 
         $this->patchJson('api/brands/' . $brand->id, ['name' => 'Updated'])
             ->assertSuccessful();
@@ -97,8 +98,8 @@ class BrandTest extends TestCase
     /** @test */
     public function it_does_not_update_a_brand_if_there_is_another_with_the_same_name()
     {
-        factory(Brand::class)->create(['name' => 'Foo']);
-        $brand = factory(Brand::class)->create(['name' => 'Bar']);
+        create(Brand::class, ['name' => 'Foo']);
+        $brand = create(Brand::class, ['name' => 'Bar']);
 
         $this->patchJson('api/brands/' . $brand->id, ['name' => 'Foo'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -109,7 +110,7 @@ class BrandTest extends TestCase
     /** @test */
     public function it_deletes_a_brand()
     {
-        $brand = factory(Brand::class)->create();
+        $brand = create(Brand::class);
         $this->deleteJson('api/brands/' . $brand->id)
             ->assertSuccessful()
             ->assertJsonFragment([

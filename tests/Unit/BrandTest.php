@@ -19,8 +19,8 @@ class BrandTest extends TestCase
     /** @test */
     public function has_many_products()
     {
-        $brand = factory(Brand::class)->create();
-        factory(Product::class)->make(['brand_id' => $brand->id]);
+        $brand = create(Brand::class);
+        make(Product::class, ['brand_id' => $brand->id]);
 
         $this->assertInstanceOf(HasMany::class, $brand->products());
         $this->assertInstanceOf(Collection::class, $brand->products);

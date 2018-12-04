@@ -14,8 +14,7 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function it_lists_all_product_levels()
     {
-        $this->withExceptionHandling();
-        $level = factory(ProductLevel::class)->create();
+        $level = create(ProductLevel::class);
 
         $this->getJson('api/product-levels')
             ->assertSuccessful()
@@ -25,7 +24,7 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function it_shows_a_product_level()
     {
-        $level = factory(ProductLevel::class)->create();
+        $level = create(ProductLevel::class);
         $this->getJson('api/product-levels/' . $level->id)
             ->assertSuccessful()
             ->assertJsonFragment([
@@ -52,7 +51,7 @@ class ProductLevelTest extends TestCase
     {
         $data = ['name' => 'test'];
 
-        factory(ProductLevel::class)->create($data);
+        create(ProductLevel::class, $data);
         $this->assertCount(1, ProductLevel::all());
 
         $this->postJson('api/product-levels/', ['name' => 'test'])
@@ -64,7 +63,7 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_product_levels_when_browse_all()
     {
-        $level = factory(ProductLevel::class)->create();
+        $level = create(ProductLevel::class);
         $level->delete();
 
         $this->getJson('api/product-levels')->assertJsonMissing(['name' => $level->name]);
@@ -74,7 +73,7 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function it_does_not_show_deleted_product_levels_when_show_one()
     {
-        $level = factory(ProductLevel::class)->create();
+        $level = create(ProductLevel::class);
         $level->delete();
 
         $this->getJson('api/product-levels/' . $level->id)->assertStatus(Response::HTTP_NOT_FOUND);
@@ -84,7 +83,7 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function it_updates_a_product_level()
     {
-        $level = factory(ProductLevel::class)->create();
+        $level = create(ProductLevel::class);
 
         $this->patchJson('api/product-levels/' . $level->id, ['name' => 'Updated'])
             ->assertSuccessful();
@@ -95,8 +94,8 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function it_does_not_update_a_product_level_if_there_is_another_with_the_same_name()
     {
-        factory(ProductLevel::class)->create(['name' => 'Foo']);
-        $level = factory(ProductLevel::class)->create(['name' => 'Bar']);
+        create(ProductLevel::class, ['name' => 'Foo']);
+        $level = create(ProductLevel::class, ['name' => 'Bar']);
 
         $this->patchJson('api/product-levels/' . $level->id, ['name' => 'Foo'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -107,7 +106,7 @@ class ProductLevelTest extends TestCase
     /** @test */
     public function it_deletes_a_product_level()
     {
-        $level = factory(ProductLevel::class)->create();
+        $level = create(ProductLevel::class);
         $this->deleteJson('api/product-levels/' . $level->id)
             ->assertSuccessful()
             ->assertJsonFragment([
